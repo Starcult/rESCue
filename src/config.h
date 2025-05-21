@@ -17,6 +17,10 @@
   #define HARDWARE_VERSION_MINOR 0
 #endif
 
+/**Speed Sensor Setting */
+#define SPEED_SENSOR_PIN 5 // Adjust to your GPIO
+#define PULSES_PER_REVOLUTION 6 // Adjust based on sensor (e.g., 6 magnets)
+#define WHEEL_DIAMETER_M 0.66 // Adjust for your wheel (e.g., 26")
 /**** Definition for control of front- and backlight ****/
 
 #define NUMPIXELS    16  // the number of LEDs if WS28xx is used

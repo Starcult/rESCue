@@ -52,6 +52,61 @@ LightBarController *lightbar = new LightBarController();
   BMSController *bmsController = new BMSController(&vescData);
 #endif
 
+// --- SPEED SENSOR & EN06 UART DEFINITIONS ---
+#ifndef SPEED_SENSOR_PIN
+ #define SPEED_SENSOR_PIN 5  // digital pin for SPEED_SENSOR
+#endif //SPEED_SENSOR_PIN
+
+#define PULSES_PER_REVOLUTION 6 // Adjust based on sensor (e.g., 6 magnets)
+#define WHEEL_DIAMETER_M 0.66   // Adjust for your wheel (e.g., 26")
+
+#include <HardwareSerial.h>
+HardwareSerial EN06(1);
+
+volatile unsigned long pulse_count = 0;
+unsigned long last_pulse_time = 0;
+float speed_kmh = 0;
+
+void IRAM_ATTR speed_sensor_isr() {
+    pulse_count++;
+}
+
+void calculate_speed() {
+    static unsigned long last_calc = 0;
+    if (millis() - last_calc < 500) return;
+    last_calc = millis();
+    unsigned long pulses = pulse_count;
+    pulse_count = 0;
+    unsigned long delta_time = millis() - last_pulse_time;
+    last_pulse_time = millis();
+    if (delta_time > 0) {
+        float circumference = 3.14159f * WHEEL_DIAMETER_M;
+        float revolutions_per_sec = (pulses / (float)PULSES_PER_REVOLUTION) / (delta_time / 1000.0f);
+        speed_kmh = revolutions_per_sec * circumference * 3.6f;
+    } else {
+        speed_kmh = 0;
+    }
+}
+
+void send_en06_packet() {
+    static unsigned long last_send = 0;
+    if (millis() - last_send < 500) return;
+    last_send = millis();
+    calculate_speed();
+    uint8_t speed = (uint8_t)speed_kmh;
+    uint8_t voltage = (uint8_t)vescData.inputVoltage; // Use vescData for voltage
+    uint8_t current = (uint8_t)vescData.current;      // Use vescData for current
+    uint8_t pas_level = 1; // Placeholder
+    uint8_t packet[] = {0x46, speed, voltage, current, pas_level, 0x00};
+    uint8_t checksum = 0;
+    for (int i = 1; i < sizeof(packet) - 1; i++) {
+        checksum += packet[i];
+    }
+    packet[sizeof(packet) - 1] = checksum;
+    EN06.write(packet, sizeof(packet));
+}
+// --- END SPEED SENSOR & EN06 UART DEFINITIONS ---
+
 void setup() {
 
   // give some time to avoid brownouts
@@ -122,6 +177,18 @@ void setup() {
 #ifdef PIN_BOARD_LED
     digitalWrite(PIN_BOARD_LED,HIGH);
 #endif
+#ifndef DISPLAY_RX_PIN
+ #define DISPLAY_RX_PIN 9  // digital pin for DISPLAY_RX_PIN
+#endif //DISPLAY_RX_PIN
+
+#ifndef DISPLAY_TX_PIN
+ #define DISPLAY_TX_PIN 10  // digital pin for DISPLAY_RX_PIN
+#endif //DISPLAY_TX_PIN
+    // --- SPEED SENSOR & EN06 UART INIT ---
+    EN06.begin(9600, SERIAL_8N1, DISPLAY_RX_PIN, DISPLAY_TX_PIN); // UART1 for EN06, adjust pins as needed
+    pinMode(SPEED_SENSOR_PIN, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(SPEED_SENSOR_PIN), speed_sensor_isr, FALLING);
+    // --- END SPEED SENSOR & EN06 UART INIT ---
 }
 
 void loop() {
@@ -187,4 +254,8 @@ void loop() {
 
     // call the VESC UART-to-Bluetooth bridge
     bleServer->loop(&vescData, loopTime, maxLoopTime);
+
+    // --- SPEED SENSOR & EN06 UART LOOP ---
+    send_en06_packet();
+    // --- END SPEED SENSOR & EN06 UART LOOP ---
 }

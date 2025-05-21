@@ -12,6 +12,7 @@
 - Lightbar for battery monitor and footpad sensor (visual and acoustic)
 - Blynk-App (Monitoring & Configuration)
 - Over-The-Air updates (OTA)
+- Support EN06 Display with Speed Sensor 
 
 *2021-04-09: Renamed from "funwheel-controller" to rESCue.*
 
@@ -59,12 +60,14 @@ Connect your Cheap FOCer to GPIOs of the ESP32 as follows:
 |:---:|:---:|:---:|
 |GPIO 16 | RX| UART (if used)|
 |GPIO 17 | TX| UART (if used)|
+|GPIO 9 | RX| EN06 UART (if used)|
+|GPIO 10 | TX| EN06 (if used)|
 |GPIO 26 | CANBUS-RX | the GPIO is connected to the CAN-tranceiver, not directly to the CF2|
 |GPIO 27 | CANBUS-TX | the GPIO is connected to the CAN-tranceiver, not directly to the CF2|
 |GPIO 18 | PC13 | forward|
 |GPIO 19 | PC14 | backward|
 |GPIO 21 | PA15 | brake |
-|GPIO 5 | PB12 | buzzer |
+|GPIO 5 | PB12 | Speed Sensor |
 
 Connect your WS28xx pixel to the DC-DC converter and attach the DIN-Pin to GPIO 4 of your ESP.
 

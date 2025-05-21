@@ -49,6 +49,9 @@ If you want to use COB modules, tri-color 12V COB with two MOSFET modules are re
 
 - [Tri-Color COB module](https://de.aliexpress.com/item/4001104767020.html?spm=a2g0s.9042311.0.0.172a4c4dnC5uX4)
 - [D4184 MOSFET module](https://www.banggood.com/3pcs-D4184-Isolated-MOSFET-MOS-Tube-FET-Relay-Module-40V-50A-p-1444317.html?rmmds=myorder)
+En 06 Display Support
+-[EN06 Display]
+<img src="docs/images/en06.jpg" alt="rESCue-en06" style="width:300px;">
 
 ### Wiring
 

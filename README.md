@@ -49,6 +49,8 @@ If you want to use COB modules, tri-color 12V COB with two MOSFET modules are re
 - [Tri-Color COB module](https://de.aliexpress.com/item/4001104767020.html?spm=a2g0s.9042311.0.0.172a4c4dnC5uX4)
 - [D4184 MOSFET module](https://www.banggood.com/3pcs-D4184-Isolated-MOSFET-MOS-Tube-FET-Relay-Module-40V-50A-p-1444317.html?rmmds=myorder)
 
+
+
 ### Wiring
 
 Connect you VESC (e.g. [Cheap FOCer 2](https://github.com/shamansystems/Cheap-FOCer-2)) to the RX- and TX-PINs of the UART2 of your ESP32 (GPIO 16 & 17).
@@ -59,6 +61,8 @@ Connect your Cheap FOCer to GPIOs of the ESP32 as follows:
 |:---:|:---:|:---:|
 |GPIO 16 | RX| UART (if used)|
 |GPIO 17 | TX| UART (if used)|
+|GPIO 9 | RX| Display UART (if used)|
+|GPIO 10 | TX| Display UART (if used)|
 |GPIO 26 | CANBUS-RX | the GPIO is connected to the CAN-tranceiver, not directly to the CF2|
 |GPIO 27 | CANBUS-TX | the GPIO is connected to the CAN-tranceiver, not directly to the CF2|
 |GPIO 18 | PC13 | forward|
